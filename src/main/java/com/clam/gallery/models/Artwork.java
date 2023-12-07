@@ -5,9 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
 
-
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
@@ -19,16 +20,23 @@ import java.util.UUID;
 public class Artwork {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID artworkId;
 
     private String title;
 
     private String medium;
 
-    private Date creationDate;
+    @CreationTimestamp
+    private Timestamp creationDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    // @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "artistId", referencedColumnName = "artistId")
-    private Artist artist;
+    private UUID artist;
 
+    public Artwork(String title, String medium, UUID artist) {
+        this.title = title;
+        this.medium = medium;
+        this.artist = artist;
+    }
 }
