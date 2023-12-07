@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
@@ -17,11 +18,17 @@ import java.util.UUID;
 public class Artist {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID artistId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    // @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userId", referencedColumnName = "id")
-    private User user;
+    private UUID user;
 
     private String description;
+
+    public Artist(UUID user, String description) {
+        this.user = user;
+        this.description = description;
+    }
 }

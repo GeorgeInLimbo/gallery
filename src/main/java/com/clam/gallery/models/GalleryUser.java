@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "gallery_users")
-public class User {
+public class GalleryUser {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -42,7 +42,7 @@ public class User {
     //private Favorites favorites;
 
 
-    public User(String firstName, String lastName, String email, Role role, String password) {
+    public GalleryUser(String firstName, String lastName, String email, Role role, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

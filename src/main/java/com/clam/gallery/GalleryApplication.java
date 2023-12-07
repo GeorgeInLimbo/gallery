@@ -1,10 +1,11 @@
 package com.clam.gallery;
 
-import com.clam.gallery.models.Artwork;
-import com.clam.gallery.models.Role;
-import com.clam.gallery.models.User;
+import com.clam.gallery.models.*;
+import com.clam.gallery.repositories.ArtistRepository;
 import com.clam.gallery.repositories.ArtworkRepository;
-import com.clam.gallery.repositories.UserRepository;
+import com.clam.gallery.repositories.FavoritedRepository;
+import com.clam.gallery.repositories.GalleryUserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,7 +21,13 @@ public class GalleryApplication {
 	private ArtworkRepository artworkRepo;
 
 	@Autowired
-	private UserRepository userRepo;
+	private GalleryUserRepository userRepo;
+
+	@Autowired
+	private ArtistRepository artistRepo;
+
+	@Autowired
+	private FavoritedRepository faveRepo;
 
 	public static void main(String[] args) {
 		SpringApplication.run(GalleryApplication.class, args);
@@ -30,16 +37,14 @@ public class GalleryApplication {
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
 			Artwork work1 = Artwork.builder()
-				// .artworkId(UUID.fromString("123e4567-e89b-12d3-a456-426655440000"))
 				.title("Beginnings")
 				.medium("Acrylics")
-				//.creationDate(new Date(2023, 12, 6))
 				.artist(UUID.fromString("0550fcef-a1d7-403f-9bed-3981e0362e05"))
 				.build();
 
 			artworkRepo.save(work1);
 
-			User user1 = User.builder()
+			GalleryUser user1 = GalleryUser.builder()
 				.firstName("George")
 				.lastName("Clam")
 				.email("george@email.com")
@@ -48,6 +53,22 @@ public class GalleryApplication {
 				.build();
 
 			userRepo.save(user1);
+
+			Artist artist1 = Artist.builder()
+				.user(UUID.fromString("54f20762-0e2d-4afe-a081-be5e4a66976e"))
+				.description("This is a test Artist.")
+				.build();
+
+			artistRepo.save(artist1);
+
+			FavoritedEntity fave1 = FavoritedEntity.builder()
+				.user(userRepo.findById(UUID.fromString("54f20762-0e2d-4afe-a081-be5e4a66976e"))
+					.orElseThrow(() -> new EntityNotFoundException("This user could not be found.")))
+				.artwork(artworkRepo.findById(UUID.fromString("0550fcef-a1d7-403f-9bed-3981e0362e05"))
+					.orElseThrow(() -> new EntityNotFoundException("This artwork could not be found.")))
+				.build();
+
+			faveRepo.save(fave1);
 		};
 	}
 
